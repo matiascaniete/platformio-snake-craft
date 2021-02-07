@@ -134,10 +134,10 @@ bool Snake::isEatenBy(Snake &snake)
 
 void Snake::assignPlayer(Player &player)
 {
-    this->player = player;
+    this->player = &player;
 }
 
-Player Snake::getPlayer()
+Player* Snake::getPlayer()
 {
     return player;
 }

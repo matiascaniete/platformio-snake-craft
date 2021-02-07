@@ -19,9 +19,9 @@ private:
     SnakePart parts[MAX_LENGTH];
     uint8_t boxW, boxH;
     Position initPosition;
-    Player player;
 
 public:
+    Player *player;
     uint8_t killed = 0;
     uint8_t ate = 0;
     void init(uint8_t boxW, uint8_t boxH, uint8_t stepSize, uint8_t color, Position initPosition);
@@ -36,7 +36,7 @@ public:
     SnakePart head();
     SnakePart teleport(SnakePart &part);
     void assignPlayer(Player &Player);
-    Player getPlayer();
+    Player* getPlayer();
 };
 
 #endif

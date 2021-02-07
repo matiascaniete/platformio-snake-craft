@@ -150,12 +150,11 @@ bool Game::compute(Snake &snake)
         snake.grow();
         if (snake.ate > 4)
         {
-            snake.getPlayer().win();
+            snake.getPlayer()->win();
             snake.ate = 0;
         }
         
-        snake.getPlayer().win();
-        Serial.println(snake.getPlayer().wins);
+        Serial.println(snake.getPlayer()->getScore());
         flags[FLAG_SOMEONE_ATE] = true;
     }
 
