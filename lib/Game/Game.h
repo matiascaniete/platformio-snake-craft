@@ -5,10 +5,7 @@
 #include "Snake.h"
 #include "Mouse.h"
 #include "Player.h"
-#include "IR.h"
-
-#define JOY_MID 520
-#define JOY_THR 200
+#include "Control.h"
 
 #define FLAG_SOMEONE_ATE 0
 
@@ -28,7 +25,7 @@ public:
     void init(Adafruit_PCD8544 &display);
     void welcome();
     void restart();
-    void senseJoystick(uint8_t playerIndex, int joystickX, int joystickY, bool button);
+    //void senseJoystick(uint8_t playerIndex, int joystickX, int joystickY, bool button);
     //void senseIRRemoteDVD(uint8_t playerIndex, uint32_t value);
     //void senseIRRemoteTV(uint8_t playerIndex, uint32_t value);
     void doAction(uint8_t playerIndex, uint8_t action);

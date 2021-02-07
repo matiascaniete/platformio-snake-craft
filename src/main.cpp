@@ -4,14 +4,12 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include <Adafruit_NeoPixel.h>
-#include <ezButton.h>
-#include <IRremote.h>
 #include <Tasker.h>
 
 #include <Game.h>
 #include <Notes.h>
 #include <RGB.h>
-#include <IR.h>
+#include <Control.h>
 
 // Software SPI (slower updates, more flexible pin options):
 
@@ -42,14 +40,12 @@
 
 Adafruit_PCD8544 display = Adafruit_PCD8544(LCD_CLK, LCD_DIN, LCD_DC, LCD_CS, LCD_RST);
 Adafruit_NeoPixel pixels(NUMPIXELS, RGB_PIN, NEO_GRB + NEO_KHZ800);
-ezButton button(S_PIN);
-IRrecv IrReceiver(IR_PIN);
 
 Tasker tasker;
 
-Game game = Game();
-RGB rgb = RGB();
-IR ir;
+Game game;
+RGB rgb;
+Control control;
 
 void startRefresh(uint8_t level);
 void refreshScreen();
@@ -66,12 +62,11 @@ void setup()
 
   pinMode(SPK_PIN, OUTPUT);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  //pinMode(LED_BUILTIN, OUTPUT);
 
-  ir.init(IrReceiver);
-
+  control.initJoystic(X_PIN, Y_PIN, S_PIN);
+  control.initIR(IR_PIN);
   rgb.init(pixels);
-
   game.init(display);
   game.welcome();
 
@@ -134,6 +129,7 @@ void refreshScreen()
     startRefresh(game.getLevel());
   }
 }
+
 void stopRefresh()
 {
   tasker.cancel(refreshScreen);
@@ -142,9 +138,7 @@ void stopRefresh()
 void loop()
 {
   tasker.loop();
-  button.loop();
-  ir.loop();
 
-  game.doAction(1, ir.action());
-  game.senseJoystick(0, analogRead(X_PIN), analogRead(Y_PIN), button.isReleased());
+  game.doAction(0, control.actionFromJoystic());
+  game.doAction(1, control.actionFromIR());
 }
