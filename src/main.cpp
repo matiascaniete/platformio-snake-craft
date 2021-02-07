@@ -11,6 +11,7 @@
 #include <Game.h>
 #include <Notes.h>
 #include <RGB.h>
+#include <IR.h>
 
 // Software SPI (slower updates, more flexible pin options):
 
@@ -48,6 +49,7 @@ Tasker tasker;
 
 Game game = Game();
 RGB rgb = RGB();
+IR ir;
 
 void startRefresh(uint8_t level);
 void refreshScreen();
@@ -65,8 +67,8 @@ void setup()
   pinMode(SPK_PIN, OUTPUT);
 
   pinMode(LED_BUILTIN, OUTPUT);
-  IrReceiver.enableIRIn();  // Start the receiver
-  IrReceiver.blink13(true); // Enable feedback LED
+
+  ir.init(IrReceiver);
 
   rgb.init(pixels);
 
@@ -75,18 +77,6 @@ void setup()
 
   startRefresh(game.getLevel());
 }
-
-uint32_t readIR()
-{
-  decode_results results;
-  if (IrReceiver.decode(&results))
-  {
-    Serial.println(results.value, HEX);
-    IrReceiver.resume(); // Receive the next value
-  }
-
-  return results.value;
-};
 
 void blinkAlert(uint16_t frec = 440, uint16_t wait = 100, uint32_t color = 0x888888)
 {
@@ -153,8 +143,8 @@ void loop()
 {
   tasker.loop();
   button.loop();
+  ir.loop();
 
-  uint32_t value = readIR();
-  game.senseIRRemoteDVD(1, value);
+  game.doAction(1, ir.action());
   game.senseJoystick(0, analogRead(X_PIN), analogRead(Y_PIN), button.isReleased());
 }

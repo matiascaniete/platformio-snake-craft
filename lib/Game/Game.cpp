@@ -84,7 +84,7 @@ void Game::senseJoystick(uint8_t playerIndex, int joysticX, int joysticY, bool b
         player[playerIndex].center();
     }
 }
-
+/*
 void Game::senseIRRemoteDVD(uint8_t playerIndex, uint32_t value)
 {
     // Códigos Sony DVD RMT-D178P
@@ -131,6 +131,32 @@ void Game::senseIRRemoteTV(uint8_t playerIndex, uint32_t value)
         break;
     case 0xA70:
         player[1].center();
+        break;
+
+    default:
+        break;
+    }
+}
+*/
+
+void Game::doAction(uint8_t playerIndex, uint8_t action)
+{
+    switch (action)
+    {
+    case UP:
+        player[playerIndex].up();
+        break;
+    case DOWN:
+        player[playerIndex].down();
+        break;
+    case LEFT:
+        player[playerIndex].left();
+        break;
+    case RIGHT:
+        player[playerIndex].right();
+        break;
+    case CENTER:
+        player[playerIndex].center();
         break;
 
     default:

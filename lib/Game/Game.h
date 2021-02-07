@@ -5,6 +5,7 @@
 #include "Snake.h"
 #include "Mouse.h"
 #include "Player.h"
+#include "IR.h"
 
 #define JOY_MID 520
 #define JOY_THR 200
@@ -28,8 +29,9 @@ public:
     void welcome();
     void restart();
     void senseJoystick(uint8_t playerIndex, int joystickX, int joystickY, bool button);
-    void senseIRRemoteDVD(uint8_t playerIndex, uint32_t value);
-    void senseIRRemoteTV(uint8_t playerIndex, uint32_t value);
+    //void senseIRRemoteDVD(uint8_t playerIndex, uint32_t value);
+    //void senseIRRemoteTV(uint8_t playerIndex, uint32_t value);
+    void doAction(uint8_t playerIndex, uint8_t action);
     bool compute(Snake &snake);
     bool compute(Snake &snake, Snake &otherSnake);
     bool draw();
