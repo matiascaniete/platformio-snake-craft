@@ -59,9 +59,6 @@ void setup()
 
   randomSeed(analogRead(RANDOM_PIN));
 
-  display.begin();
-  display.setContrast(50);
-
   pinMode(BL_PIN, OUTPUT);
   digitalWrite(BL_PIN, 1);
 

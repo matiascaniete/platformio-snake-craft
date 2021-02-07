@@ -16,6 +16,9 @@ void Game::init(Adafruit_PCD8544 &display)
 {
     this->display = &display;
 
+    display.begin();
+    display.setContrast(50);
+
     snake[0].init(display.width(), display.height(), stepSize, BLACK, Position(stepSize * 2, stepSize * 2));
     snake[1].init(display.width(), display.height(), stepSize, WHITE, Position(display.width() - stepSize * 2, display.height() - stepSize * 2));
     mouse.init(display.width(), display.height(), stepSize);
