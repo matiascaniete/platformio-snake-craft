@@ -2,28 +2,43 @@
 
 Game::Game()
 {
-    this->snake[0] = Snake();
-    this->snake[1] = Snake();
-    this->player[0] = Player();
-    this->player[1] = Player();
+    snake[0] = Snake();
+    snake[1] = Snake();
+    player[0] = Player();
+    player[1] = Player();
 
-    this->snake[0].assignPlayer(this->player[0]);
-    this->snake[1].assignPlayer(this->player[1]);
-    this->mouse = Mouse();
+    snake[0].assignPlayer(player[0]);
+    snake[1].assignPlayer(player[1]);
+    mouse = Mouse();
 }
 
-void Game::init(Adafruit_PCD8544 &display)
+void Game::initDisplay(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST, uint8_t BL)
 {
-    this->display = &display;
+    pinMode(BL, OUTPUT);
+    digitalWrite(BL, 1);
 
-    display.begin();
-    display.setContrast(50);
+    display = new Adafruit_PCD8544(SCLK, DIN, DC, CS, RST);
 
-    snake[0].init(display.width(), display.height(), stepSize, BLACK, Position(stepSize * 2, stepSize * 2));
-    snake[1].init(display.width(), display.height(), stepSize, WHITE, Position(display.width() - stepSize * 2, display.height() - stepSize * 2));
-    mouse.init(display.width(), display.height(), stepSize);
+    display->begin();
+    display->setContrast(50);
+
+    snake[0].init(display->width(), display->height(), stepSize, BLACK, Position(stepSize * 2, stepSize * 2));
+    snake[1].init(display->width(), display->height(), stepSize, WHITE, Position(display->width() - stepSize * 2, display->height() - stepSize * 2));
+    mouse.init(display->width(), display->height(), stepSize);
 
     flags[FLAG_SOMEONE_ATE] = false;
+}
+
+void Game::initSpeaker(uint8_t pin)
+{
+    this->spkPin = pin;
+    pinMode(spkPin, OUTPUT);
+}
+
+void Game::initRGBStrip(uint8_t pin)
+{
+    rgb = new RGB();
+    rgb->init(pin);
 }
 
 void Game::welcome()
@@ -41,6 +56,26 @@ void Game::welcome()
     }
 
     delay(1000);
+}
+
+void Game::start()
+{
+    updateRefreshRate();
+}
+
+void Game::loop()
+{
+    if (rgbTimer.isExpired())
+    {
+        refreshScores();
+        rgbTimer.repeat();
+    }
+
+    if (displayTimer.isExpired())
+    {
+        refreshScreen();
+        displayTimer.repeat();
+    }
 }
 
 void Game::restart()
@@ -88,14 +123,14 @@ bool Game::compute(Snake &snake)
             level++;
             mouse.killed = 0;
         }
-        
+
         snake.grow();
         if (snake.ate > 4)
         {
             snake.getPlayer()->win();
             snake.ate = 0;
         }
-        
+
         Serial.println(snake.getPlayer()->getScore());
         flags[FLAG_SOMEONE_ATE] = true;
     }
@@ -163,4 +198,59 @@ bool Game::someoneAte()
 uint8_t Game::getLevel()
 {
     return level;
+}
+
+void Game::blinkAlert(uint16_t frec = 440, uint16_t wait = 100, uint32_t color = 0x888888)
+{
+    tone(spkPin, frec);
+    rgb->hex(color);
+    delay(wait);
+
+    rgb->hex(0x000000);
+    noTone(spkPin);
+    delay(wait);
+}
+
+void Game::roundOver()
+{
+    blinkAlert(NOTE_C4, 150, 0x440000);
+    blinkAlert(NOTE_B3, 150, 0x880000);
+    blinkAlert(NOTE_AS3, 150, 0xFF0000);
+}
+
+void Game::success()
+{
+    blinkAlert(NOTE_C7, 25, 0xFFFFFF);
+    blinkAlert(NOTE_E7, 25, 0xFFFFFF);
+    blinkAlert(NOTE_G7, 25, 0xFFFFFF);
+}
+
+void Game::refreshScores()
+{
+    rgb->scores(getScore(0), getScore(1));
+}
+
+void Game::updateRefreshRate()
+{
+    int gameDelay = 200 - 10 * (getLevel() - 1);
+    displayTimer.start(gameDelay, AsyncDelay::MILLIS);
+    rgbTimer.start(50, AsyncDelay::MILLIS);
+}
+
+void Game::refreshScreen()
+{
+    display->clearDisplay();
+
+    if (draw())
+    {
+        roundOver();
+        restart();
+        updateRefreshRate();
+    }
+
+    if (someoneAte())
+    {
+        success();
+        updateRefreshRate();
+    }
 }

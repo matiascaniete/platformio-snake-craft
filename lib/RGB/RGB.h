@@ -7,11 +7,11 @@
 class RGB
 {
 private:
-    Adafruit_NeoPixel pixels;
+    Adafruit_NeoPixel *pixels;
 
 public:
     RGB();
-    void init(Adafruit_NeoPixel &pixels);
+    void init(uint8_t pin);
     void hex(uint32_t c);
     void scores(int score0, int score1);
 };
