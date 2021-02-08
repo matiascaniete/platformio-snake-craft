@@ -14,13 +14,20 @@ Game::Game()
 
 void Game::initDisplay(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST, uint8_t BL)
 {
-    pinMode(BL, OUTPUT);
-    digitalWrite(BL, 1);
-
     display = new Adafruit_PCD8544(SCLK, DIN, DC, CS, RST);
-
     display->begin();
     display->setContrast(50);
+    display->clearDisplay(); // clears the screen and buffer
+    display->display();
+
+    pinMode(BL, OUTPUT);
+    for (uint8_t i = 0; i <= 3; i++)
+    {
+        digitalWrite(BL, 0);
+        delay(100);
+        digitalWrite(BL, 1);
+        delay(30);
+    }
 
     snake[0].init(display->width(), display->height(), stepSize, BLACK, Position(stepSize * 2, stepSize * 2));
     snake[1].init(display->width(), display->height(), stepSize, WHITE, Position(display->width() - stepSize * 2, display->height() - stepSize * 2));
@@ -43,11 +50,13 @@ void Game::initRGBStrip(uint8_t pin)
 
 void Game::welcome()
 {
+    delay(500);
+
     display->setTextSize(2);
     display->setTextColor(BLACK);
     for (int i = -5; i <= 0; i++)
     {
-        display->clearDisplay(); // clears the screen and buffer
+        display->clearDisplay();
         display->setCursor(i * 2, 10);
         display->println(F(" SNAKE"));
         display->println(F(" CRAFT"));
