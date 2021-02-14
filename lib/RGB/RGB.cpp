@@ -26,7 +26,7 @@ void RGB::hex(uint32_t c)
 
 void RGB::scores(int score0, int score1)
 {
-    int maxInt = 64;
+    int maxInt = 20;
     int minInt = 0;
 
     pixels->clear();

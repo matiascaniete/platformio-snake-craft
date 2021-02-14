@@ -222,16 +222,16 @@ void Game::blinkAlert(uint16_t frec = 440, uint16_t wait = 100, uint32_t color =
 
 void Game::roundOver()
 {
-    blinkAlert(NOTE_C4, 150, 0x440000);
-    blinkAlert(NOTE_B3, 150, 0x880000);
-    blinkAlert(NOTE_AS3, 150, 0xFF0000);
+    blinkAlert(NOTE_C4, 150, 0x110000);
+    blinkAlert(NOTE_B3, 150, 0x110000);
+    blinkAlert(NOTE_AS3, 150, 0x110000);
 }
 
 void Game::success()
 {
-    blinkAlert(NOTE_C7, 25, 0xFFFFFF);
-    blinkAlert(NOTE_E7, 25, 0xFFFFFF);
-    blinkAlert(NOTE_G7, 25, 0xFFFFFF);
+    blinkAlert(NOTE_C7, 25, 0x001100);
+    blinkAlert(NOTE_E7, 25, 0x001100);
+    blinkAlert(NOTE_G7, 25, 0x001100);
 }
 
 void Game::refreshScores()
